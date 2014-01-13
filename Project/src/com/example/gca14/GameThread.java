@@ -1,5 +1,6 @@
 package com.example.gca14;
 
+import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 
@@ -19,14 +20,19 @@ public class GameThread extends Thread{
 		this.running = running;
 	}
 	
+	@SuppressLint("WrongCall")
 	@Override
 	public void run() {
 		Canvas gameCanvas = null;
 		running = true;
 		while (running) {
 			gameCanvas = surfaceHolder.lockCanvas();
-			gameSurface.draw(gameCanvas);
-			surfaceHolder.unlockCanvasAndPost(gameCanvas);
+			if(gameCanvas != null){
+				synchronized (surfaceHolder) {
+					gameSurface.onDraw(gameCanvas);
+				}
+				surfaceHolder.unlockCanvasAndPost(gameCanvas);
+			}
 		}
 	}
 }

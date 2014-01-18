@@ -32,6 +32,7 @@ public class GameThread extends Thread{
 		player = new Asteroid();
 		startTime = System.currentTimeMillis();
 		
+		objects = new Vector<GameObject>();
 		for(int i = 0; i < 10; i++){
 			objects.add(new Asteroid());
 		}

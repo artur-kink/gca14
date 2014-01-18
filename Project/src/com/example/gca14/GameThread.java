@@ -51,8 +51,31 @@ public class GameThread extends Thread{
 		this.running = running;
 	}
 	
-	public float getScale(){
+	
+	/**
+	 * Return scale of world.
+	 * @return Float scale value of world.
+	 */
+	public static float getScale(){
 		return 100/player.width;
+	}
+	
+	/**
+	 * Returns world width.
+	 * This value is the screen width scaled.
+	 * @return Width of game world.
+	 */
+	public static int getWorldWidth(){
+		return (int) (((float)width)/getScale());
+	}
+	
+	/**
+	 * Returns world height.
+	 * This value is the screen height scaled.
+	 * @return Height of game world.
+	 */
+	public static int getWorldHeight(){
+		return (int) (height/getScale());
 	}
 	
 	@SuppressLint("WrongCall")
@@ -69,8 +92,8 @@ public class GameThread extends Thread{
 			player.x -= tiltX*3;
 			if(player.x < 0)
 				player.x = 0;
-			else if(player.x > gameSurface.getWidth() - 100)
-				player.x = gameSurface.getWidth() - 100;
+			else if(player.x > getWorldWidth() - 100)
+				player.x = getWorldWidth() - 100;
 			
 			player.update();
 			

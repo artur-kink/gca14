@@ -32,7 +32,7 @@ public class Asteroid extends GameObject {
 	public void update(){
 		x += xVelocity;
 		y += yVelocity;
-		if(x >= GameThread.width && x > 0){
+		if(x >= GameThread.getWorldWidth() && x > 0){
 			xVelocity = (int)(Math.random()*-5);
 		}else if(x <= 0 && x < 0){
 			xVelocity = (int)(Math.random()*5);

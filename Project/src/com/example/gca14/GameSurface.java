@@ -54,7 +54,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 		canvas.save();
 		
 		//Scale and translate canvas to fit current world.
-		canvas.scale(thread.getScale(), thread.getScale());
+		canvas.scale(GameThread.getScale(), GameThread.getScale());
 		canvas.translate(0, - GameThread.player.y);
 		
 		

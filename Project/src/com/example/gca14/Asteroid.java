@@ -1,13 +1,22 @@
 package com.example.gca14;
 
+/**
+ * Asteroid.
+ */
 public class Asteroid extends GameObject {
 	
-	public Asteroid(){
-		x = 0;
-		y = 10;
+	private int xVelocity;
+	private int yVelocity;
+	
+	public Asteroid(int tx, int ty){
+		x = tx;
+		y = ty;
+		xVelocity = 0;
+		yVelocity = 1;
 	}
 	
 	public void update(){
-		x++;
+		x += xVelocity;
+		y += yVelocity;
 	}
 }

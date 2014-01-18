@@ -11,39 +11,41 @@ import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
 
+/**
+ * The main activity.
+ */
 public class MainActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// requesting to turn the title OFF
+		
+		//Remove title.
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		// making it full screen
+		//Set as full screen and set main view to GameSurface.
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		// set our MainGamePanel as the View
 		setContentView(new GameSurface(this));
 		
+		//Register accelerator to record tilt of screen.
 		((SensorManager)getSystemService(Context.SENSOR_SERVICE)).registerListener(
 			     new SensorEventListener() {    
 			        @Override  
 			        public void onSensorChanged(SensorEvent event) {
+			        	//Update tilt values in game thread.
 			        	GameThread.tiltX = event.values[0];
 			        	GameThread.tiltY = event.values[1];
 			        }
 			        
 			        @Override  
 			        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-			        	
+			        	//Not applicable.
 			        }
-			    },
-			    ((SensorManager)getSystemService(Context.SENSOR_SERVICE))
-			    .getSensorList(Sensor.TYPE_ACCELEROMETER).get(0),   
-			     SensorManager.SENSOR_DELAY_NORMAL);
+			    }, ((SensorManager)getSystemService(Context.SENSOR_SERVICE))
+			    .getSensorList(Sensor.TYPE_ACCELEROMETER).get(0), SensorManager.SENSOR_DELAY_NORMAL);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}

@@ -11,12 +11,14 @@ public class Asteroid extends GameObject {
 	
 	private int xVelocity;
 	private int yVelocity;
-	
+	private Paint paint;
 	public Asteroid(int tx, int ty){
+		destroy = false;
 		x = tx;
 		y = ty;
-		xVelocity = 0;
+		xVelocity = (int)(Math.random()*5);
 		yVelocity = 2;
+		paint = new Paint();
 	}
 	
 	public void update(){
@@ -25,10 +27,10 @@ public class Asteroid extends GameObject {
 	}
 	
 	public void draw(Canvas canvas){
-		Paint paint = new Paint();
 		paint.setColor(0xFFFF0000);
 		Rect pos = new Rect(x, y, x + 100, y + 100);
 		canvas.drawRect(pos, paint);
-		canvas.drawText("(" + x + "x" + y + ")", x, y - 10, paint);
+		if(GameThread.debug)
+			canvas.drawText("(" + x + "x" + y + ")", x, y - 10, paint);
 	}
 }

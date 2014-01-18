@@ -12,6 +12,8 @@ import android.view.SurfaceHolder;
  */
 public class GameThread extends Thread{
 	
+	public static final boolean debug = true;
+	
 	/** Current x tilt value of device. */
 	public static float tiltX;
 	/** Current y tilt value of device. */
@@ -19,6 +21,9 @@ public class GameThread extends Thread{
 	
 	/** Time in millis of when the game was started. */
 	public static long startTime;
+	
+	public static int width;
+	public static int height;
 	
 	/** Surface the game is drawn on. */
 	private GameSurface gameSurface;
@@ -53,6 +58,8 @@ public class GameThread extends Thread{
 	public void run() {
 		Canvas gameCanvas = null;
 		running = true;
+		
+		//Game loop.
 		while (running) {
 			player.x -= tiltX*3;
 			player.y += 1;
@@ -60,8 +67,16 @@ public class GameThread extends Thread{
 				player.x = 0;
 			else if(player.x > gameSurface.getWidth() - 100)
 				player.x = gameSurface.getWidth() - 100;
+			
+			//Update game objects.
 			for(int i = 0; i < objects.size(); i++){
-				((GameObject)objects.get(i)).update();
+				objects.get(i).update();
+				
+				//If game object is destroyed, remove it from list.
+				if(objects.get(i).destroy){
+					objects.remove(i);
+					i--;
+				}
 			}
 			
 			//Draw game state.

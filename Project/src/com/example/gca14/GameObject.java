@@ -6,6 +6,10 @@ import android.graphics.Canvas;
  * Abstract base class for all game objects.
  */
 public abstract class GameObject {
+	
+	/** Destroy flag. If true object should be destroyed. */
+	public boolean destroy;
+	
 	/** X Position. */
 	public int x;
 	/** Y Position. */

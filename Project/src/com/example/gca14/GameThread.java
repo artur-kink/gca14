@@ -69,7 +69,7 @@ public class GameThread extends Thread{
 	 * @return Width of game world.
 	 */
 	public static int getWorldWidth(){
-		return (int) (((float)width)/getScale());
+		return (int) (width);
 	}
 	
 	/**
@@ -78,7 +78,7 @@ public class GameThread extends Thread{
 	 * @return Height of game world.
 	 */
 	public static int getWorldHeight(){
-		return (int) (height/getScale());
+		return (int) (height);
 	}
 	
 	/**
@@ -115,10 +115,6 @@ public class GameThread extends Thread{
 			}
 			
 			player.x -= tiltX*2;
-			if(player.x < 0)
-				player.x = 0;
-			else if(player.x > getWorldWidth() - 100)
-				player.x = getWorldWidth() - 100;
 			
 			player.update();
 			
@@ -130,14 +126,10 @@ public class GameThread extends Thread{
 				Rect objectRect = new Rect((int)object.x, (int)object.y, (int)object.x + (int)object.width, (int)object.y + (int)object.height);
 				if(playerRect.intersect(objectRect)){
 					if(object instanceof Asteroid){
-						player.width += 1;
-						player.height += 1;
-						player.yVelocity += 0.1;
+						player.increaseSize();
 						object.destroy = true;
 					}else{
-						player.width -= 1;
-						player.height -= 1;
-						player.yVelocity -= 0.1;
+						player.decreaseSize();
 						object.destroy = true;
 					}
 				}
@@ -155,11 +147,11 @@ public class GameThread extends Thread{
 			}
 			
 			//Add new game objects if there aren't enough.
-			if(objects.size() < 10){
+			if(objects.size() < 15){
 				if(stage == 0)
-					objects.add(new Asteroid(100, getWorldY() + getWorldHeight() + 100));
+					objects.add(new Asteroid((int) (Math.random()*getWorldWidth()), getWorldY() + getWorldHeight() + 100));
 				else if(stage == 1)
-					objects.add(new Cloud(100, getWorldY() + getWorldHeight() + 100));
+					objects.add(new Cloud((int) (Math.random()*getWorldWidth()), getWorldY() + getWorldHeight() + 100));
 			}
 			
 			//Draw game state.

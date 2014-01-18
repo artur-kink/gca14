@@ -3,7 +3,6 @@ package com.example.gca14;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Rect;
 
 /**
  * Asteroid.
@@ -18,21 +17,29 @@ public class Asteroid extends GameObject {
 	private float rotationSpeed;
 	private float rotation;
 	
+	private int asteroidImage;
+	
 	private Paint paint;
+	
+	public float scale;
 	
 	public Asteroid(int tx, int ty){
 		destroy = false;
 		x = tx;
 		y = ty;
 		xVelocity = (float) (Math.random()*5);
-		yVelocity = (float) (Math.random()-1);
+		yVelocity = (float) (Math.random()-1.5)*20;
 		
 		rotation = 0;
-		rotationSpeed = (float) Math.random()-1;
+		rotationSpeed = (float) Math.random() - 0.5f;
 		rotationSpeed *= 5;
 		
-		width = 100;
-		height = 100;
+		asteroidImage = (int) Math.round(Math.random() * (GameSurface.numAsteroids - 1));
+		
+		width = GameSurface.asteroids[asteroidImage].getWidth() - 50;
+		
+		scale = width/GameSurface.asteroids[asteroidImage].getWidth();
+		height = height*scale;
 		
 		paint = new Paint();
 	}
@@ -58,10 +65,11 @@ public class Asteroid extends GameObject {
 	public void draw(Canvas canvas){
 		paint.setColor(0xFFFF0000);
 		Matrix m = new Matrix();
-		m.preScale(0.5f, 0.5f);
-		m.postRotate(rotation, 0.5f*GameSurface.asteroids[0].getWidth()/2, 0.5f*GameSurface.asteroids[0].getHeight()/2);
+		m.preScale(scale, scale);
+		m.postRotate(rotation, scale*GameSurface.asteroids[asteroidImage].getWidth()/2,
+				scale*GameSurface.asteroids[asteroidImage].getHeight()/2);
 		m.postTranslate(x, y);
-		canvas.drawBitmap(GameSurface.asteroids[0], m, paint);
+		canvas.drawBitmap(GameSurface.asteroids[asteroidImage], m, paint);
 		
 		if(GameThread.debug)
 			canvas.drawText("(" + x + "x" + y + ")", x, y - 10, paint);

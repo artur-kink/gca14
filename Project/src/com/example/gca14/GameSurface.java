@@ -17,7 +17,12 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	private Paint paint;
 	private Bitmap bg;
 	
+	public static final int numAsteroids = 3;
 	public static Bitmap asteroids[];
+	public static Bitmap playerAsteroid;
+	
+	public static final int numClouds = 1;
+	public static Bitmap clouds[];
 	
 	public GameSurface(Context context) {
 		super(context);
@@ -28,7 +33,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 		paint.setTextSize(20);
 		paint.setColor(0xFFFFFFFF);
 		
-		thread = new GameThread(getHolder(), this);
 		setFocusable(true);
 	}
 
@@ -39,11 +43,19 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	@Override
 	public void surfaceCreated(SurfaceHolder arg0) {
 		
-		asteroids = new Bitmap[2];
+		asteroids = new Bitmap[numAsteroids];
 		asteroids[0] = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid1);
-		asteroids[1] = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid1);
+		asteroids[1] = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid2);
+		asteroids[2] = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid3);
+		
+		playerAsteroid = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid_player);
+		
+		clouds = new Bitmap[numClouds];
+		clouds[0] = BitmapFactory.decodeResource(getResources(), R.drawable.cloud1);
 		
 		loadBackground(R.drawable.bg_space);
+		
+		thread = new GameThread(getHolder(), this);
 		//Update GameThread screen and height information.
 		GameThread.width = getWidth();
 		GameThread.height = getHeight();
@@ -53,7 +65,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
 	public void loadBackground(int id){
 		BitmapFactory.Options o=new BitmapFactory.Options();
-		o.inSampleSize = 1;
+		//o.inSampleSize = 1;
 		o.inDither = true;
 		o.inPurgeable = true;
 		o.inMutable = false;
@@ -70,11 +82,14 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	 */
 	protected void onDraw(Canvas canvas) {
 		//Clear canvas.
+		float bgScale = ((float)getWidth())/((float)bg.getWidth());
+		canvas.save();
+		canvas.scale(bgScale, bgScale);
 		canvas.drawBitmap(bg, 0, 0, paint);
+		canvas.restore();
 		canvas.save();
 		
-		//Scale and translate canvas to fit current world.
-		canvas.scale(GameThread.getScale(), GameThread.getScale());
+		//Translate canvas to fit current world.
 		canvas.translate(0, - GameThread.getWorldY());
 		
 		
@@ -84,7 +99,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 			GameThread.objects.get(i).draw(canvas);
 		}
 		
-		//Reset canvas scale and offset.
+		//Reset canvas offset.
 		canvas.restore();
 		canvas.drawText("Time: " + (System.currentTimeMillis() - GameThread.startTime), 1, 20, paint);
 		canvas.drawText("x: " + GameThread.player.x + " y: " + GameThread.player.y, 1, 40, paint);

@@ -46,9 +46,6 @@ public class GameThread extends Thread{
 		startTime = System.currentTimeMillis();
 		
 		objects = new Vector<GameObject>();
-		for(int i = 0; i < 10; i++){
-			objects.add(new Asteroid(100, 600));
-		}
 		stage = 0;
 	}
 	
@@ -100,6 +97,10 @@ public class GameThread extends Thread{
 	public void run() {
 		Canvas gameCanvas = null;
 		running = true;
+		
+		for(int i = 0; i < 10; i++){
+			objects.add(new Asteroid((int) (Math.random() * getWorldWidth()), (int) (Math.random() *(getWorldY() + getWorldHeight() + 100))));
+		}
 		
 		//Game loop.
 		while (running) {
@@ -156,9 +157,9 @@ public class GameThread extends Thread{
 			//Add new game objects if there aren't enough.
 			if(objects.size() < 10){
 				if(stage == 0)
-					objects.add(new Asteroid(100, getWorldY()));
+					objects.add(new Asteroid(100, getWorldY() + getWorldHeight() + 100));
 				else if(stage == 1)
-					objects.add(new Cloud(100, getWorldY()));
+					objects.add(new Cloud(100, getWorldY() + getWorldHeight() + 100));
 			}
 			
 			//Draw game state.

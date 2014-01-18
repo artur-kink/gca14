@@ -17,6 +17,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	private Paint paint;
 	private Bitmap bg;
 	
+	public static Bitmap asteroids[];
+	
 	public GameSurface(Context context) {
 		super(context);
 		
@@ -36,6 +38,11 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
 	@Override
 	public void surfaceCreated(SurfaceHolder arg0) {
+		
+		asteroids = new Bitmap[2];
+		asteroids[0] = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid1);
+		asteroids[1] = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid1);
+		
 		loadBackground(R.drawable.bg_space);
 		//Update GameThread screen and height information.
 		GameThread.width = getWidth();

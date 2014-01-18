@@ -1,5 +1,7 @@
 package com.example.gca14;
 
+import java.util.Vector;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -22,11 +24,17 @@ public class GameThread extends Thread{
 	
 	public static Asteroid player;
 	
+	public Vector<GameObject> objects;
+	
 	public GameThread(SurfaceHolder holder, GameSurface surface){
 		surfaceHolder = holder;
 		gameSurface = surface;
 		player = new Asteroid();
 		startTime = System.currentTimeMillis();
+		
+		for(int i = 0; i < 10; i++){
+			objects.add(new Asteroid());
+		}
 	}
 	
 	private boolean running;
@@ -41,6 +49,10 @@ public class GameThread extends Thread{
 		running = true;
 		while (running) {
 			player.x -= tiltX;
+			for(int i = 0; i < objects.size(); i++){
+				((Asteroid)objects.get(i)).update();
+			}
+			
 			gameCanvas = surfaceHolder.lockCanvas();
 			if(gameCanvas != null){
 				synchronized (surfaceHolder) {

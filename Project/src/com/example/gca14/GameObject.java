@@ -11,10 +11,16 @@ public abstract class GameObject {
 	public boolean destroy;
 	
 	/** X Position. */
-	public int x;
+	public float x;
 	/** Y Position. */
-	public int y;
+	public float y;
 
+	/** Object width. */
+	public float width;
+	
+	/** Object height. */
+	public float height;
+	
 	/** All game objects must be updateable. */
 	public abstract void update();
 	

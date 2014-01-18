@@ -35,6 +35,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	@Override
 	public void surfaceCreated(SurfaceHolder arg0) {
 		thread.start();
+		//Update GameThread screen and height information.
 		GameThread.width = getWidth();
 		GameThread.height = getHeight();
 	}
@@ -48,9 +49,14 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	 * GameSurface draw method. Game is drawn in this method.
 	 */
 	protected void onDraw(Canvas canvas) {
-		// fills the canvas with black
+		//Clear canvas.
 		canvas.drawColor(Color.BLACK);
+		canvas.save();
+		
+		//Scale and translate canvas to fit current world.
+		canvas.scale(thread.getScale(), thread.getScale());
 		canvas.translate(0, - GameThread.player.y);
+		
 		
 		GameThread.player.draw(canvas);
 		
@@ -58,8 +64,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 			GameThread.objects.get(i).draw(canvas);
 		}
 		
-		//Reset canvas offset.
-		canvas.translate(0, GameThread.player.y);
+		//Reset canvas scale and offset.
+		canvas.restore();
 		canvas.drawText("Time: " + (System.currentTimeMillis() - GameThread.startTime), 1, 20, paint);
 		canvas.drawText("x: " + GameThread.player.x + " y: " + GameThread.player.y, 1, 40, paint);
 	}

@@ -1,6 +1,8 @@
 package com.example.gca14;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -14,7 +16,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
 	private GameThread thread;
 	private Paint paint;
-	
+	private Bitmap bg;
 	public GameSurface(Context context) {
 		super(context);
 		
@@ -34,10 +36,17 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
 	@Override
 	public void surfaceCreated(SurfaceHolder arg0) {
-		thread.start();
+		BitmapFactory.Options o=new BitmapFactory.Options();
+		o.inSampleSize = 4;
+		o.inDither = false;
+		o.inPurgeable = true;
+		o.inMutable = false;
+		bg = BitmapFactory.decodeResource(getResources(), R.drawable.bg_space, o);
 		//Update GameThread screen and height information.
 		GameThread.width = getWidth();
 		GameThread.height = getHeight();
+		
+		thread.start();
 	}
 
 	@Override
@@ -50,7 +59,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	 */
 	protected void onDraw(Canvas canvas) {
 		//Clear canvas.
-		canvas.drawColor(Color.BLACK);
+		paint.setAntiAlias(false);
+		canvas.drawBitmap(bg, -50, 0, paint);
 		canvas.save();
 		
 		//Scale and translate canvas to fit current world.

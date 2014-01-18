@@ -33,7 +33,7 @@ public class Asteroid extends GameObject {
 		x += xVelocity;
 		y += yVelocity;
 		
-		if(y - height < GameThread.getWorldY()){
+		if(y + height < GameThread.getWorldY()){
 			destroy = true;
 			return;
 		}

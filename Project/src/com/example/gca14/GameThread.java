@@ -112,8 +112,8 @@ public class GameThread extends Thread{
 				GameObject object = objects.get(i);
 				Rect objectRect = new Rect((int)object.x, (int)object.y, (int)object.x + (int)object.width, (int)object.y + (int)object.height);
 				if(playerRect.intersect(objectRect)){
-					player.width += 10;
-					player.height += 10;
+					player.width += 1;
+					player.height += 1;
 					player.yVelocity += 0.5;
 					object.destroy = true;
 				}

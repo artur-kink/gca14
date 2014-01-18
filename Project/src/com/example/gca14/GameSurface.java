@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -14,11 +13,16 @@ import android.view.SurfaceView;
 public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
 	private GameThread thread;
+	private Paint paint;
 	
 	public GameSurface(Context context) {
 		super(context);
 		
 		getHolder().addCallback(this);
+		
+		paint = new Paint();
+		paint.setTextSize(20);
+		paint.setColor(0xFFFFFFFF);
 		
 		thread = new GameThread(getHolder(), this);
 		setFocusable(true);
@@ -44,21 +48,16 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	protected void onDraw(Canvas canvas) {
 		// fills the canvas with black
 		canvas.drawColor(Color.BLACK);
-		Rect pos = new Rect(GameThread.player.x, GameThread.player.y,
-				GameThread.player.x + 100, GameThread.player.y + 100);
-		Paint paint = new Paint();
-		paint.setColor(0xFFFFFFFF);
-		canvas.drawRect(pos, paint);
+		canvas.translate(0, - GameThread.player.y);
 		
-		paint.setColor(0xFFFF0000);
+		GameThread.player.draw(canvas);
+		
 		for(int i = 0; i < GameThread.objects.size(); i++){
-			pos = new Rect(GameThread.objects.get(i).x, GameThread.objects.get(i).y,
-					GameThread.objects.get(i).x + 100, GameThread.objects.get(i).y + 100);
-			canvas.drawRect(pos, paint);
+			GameThread.objects.get(i).draw(canvas);
 		}
 		
-		paint.setColor(0xFFFFFFFF);
-		paint.setTextSize(20);
+		//Reset canvas offset.
+		canvas.translate(0, GameThread.player.y);
 		canvas.drawText("Time: " + (System.currentTimeMillis() - GameThread.startTime), 1, 20, paint);
 		canvas.drawText("x: " + GameThread.player.x + " y: " + GameThread.player.y, 1, 40, paint);
 	}

@@ -4,7 +4,6 @@ import java.util.Vector;
 
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;
-import android.util.Log;
 import android.view.SurfaceHolder;
 
 /**
@@ -25,14 +24,14 @@ public class GameThread extends Thread{
 	private GameSurface gameSurface;
 	private SurfaceHolder surfaceHolder;
 	
-	public static Asteroid player;
+	public static Player player;
 	
 	public static Vector<GameObject> objects;
 	
 	public GameThread(SurfaceHolder holder, GameSurface surface){
 		surfaceHolder = holder;
 		gameSurface = surface;
-		player = new Asteroid(0, 0);
+		player = new Player();
 		startTime = System.currentTimeMillis();
 		
 		objects = new Vector<GameObject>();
@@ -55,7 +54,12 @@ public class GameThread extends Thread{
 		Canvas gameCanvas = null;
 		running = true;
 		while (running) {
-			player.x -= tiltX;
+			player.x -= tiltX*3;
+			player.y += 1;
+			if(player.x < 0)
+				player.x = 0;
+			else if(player.x > gameSurface.getWidth() - 100)
+				player.x = gameSurface.getWidth() - 100;
 			for(int i = 0; i < objects.size(); i++){
 				((GameObject)objects.get(i)).update();
 			}

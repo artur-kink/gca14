@@ -10,9 +10,9 @@ import android.graphics.Rect;
 public class Asteroid extends GameObject {
 	
 	/** Horizontal velocity of asteroid. */
-	private int xVelocity;
+	private float xVelocity;
 	/** Vertical velocity of asteroid. */
-	private int yVelocity;
+	private float yVelocity;
 	
 	private Paint paint;
 	
@@ -20,8 +20,8 @@ public class Asteroid extends GameObject {
 		destroy = false;
 		x = tx;
 		y = ty;
-		xVelocity = (int)(Math.random()*5);
-		yVelocity = (int)(Math.random()*3);
+		xVelocity = (float) (Math.random()*5);
+		yVelocity = (float) (Math.random()*3);
 		
 		width = 100;
 		height = 100;
@@ -32,10 +32,16 @@ public class Asteroid extends GameObject {
 	public void update(){
 		x += xVelocity;
 		y += yVelocity;
+		
+		if(y - height < GameThread.getWorldY()){
+			destroy = true;
+			return;
+		}
+		
 		if(x >= GameThread.getWorldWidth() && x > 0){
-			xVelocity = (int)(Math.random()*-5);
+			xVelocity = (float) (Math.random()*-5);
 		}else if(x <= 0 && x < 0){
-			xVelocity = (int)(Math.random()*5);
+			xVelocity = (float) (Math.random()*5);
 		}
 	}
 	

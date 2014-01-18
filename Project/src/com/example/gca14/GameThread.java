@@ -78,6 +78,14 @@ public class GameThread extends Thread{
 		return (int) (height/getScale());
 	}
 	
+	/**
+	 * Get Y position of world.
+	 * @return
+	 */
+	public static int getWorldY(){
+		return (int) player.y;
+	}
+	
 	@SuppressLint("WrongCall")
 	@Override
 	/**
@@ -89,7 +97,7 @@ public class GameThread extends Thread{
 		
 		//Game loop.
 		while (running) {
-			player.x -= tiltX*3;
+			player.x -= tiltX*player.yVelocity;
 			if(player.x < 0)
 				player.x = 0;
 			else if(player.x > getWorldWidth() - 100)
@@ -122,7 +130,7 @@ public class GameThread extends Thread{
 				}
 			}
 			
-			//Add new game objects if there arent enough.
+			//Add new game objects if there aren't enough.
 			if(objects.size() < 10){
 				objects.add(new Asteroid(100, (int) (player.y + 1000)));
 			}

@@ -14,7 +14,7 @@ public class Player extends GameObject {
 	
 	public Player(){
 		x = y = 0;
-		yVelocity = 1;
+		yVelocity = (float) 0.1;
 		width = 100;
 		height = 100;
 	}

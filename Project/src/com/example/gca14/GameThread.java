@@ -26,6 +26,8 @@ public class GameThread extends Thread{
 	public static int width;
 	public static int height;
 	
+	public static float worldY;
+	
 	/** Surface the game is drawn on. */
 	private GameSurface gameSurface;
 	private SurfaceHolder surfaceHolder;
@@ -34,16 +36,20 @@ public class GameThread extends Thread{
 	
 	public static Vector<GameObject> objects;
 	
+	public static int stage;
+	
 	public GameThread(SurfaceHolder holder, GameSurface surface){
 		surfaceHolder = holder;
 		gameSurface = surface;
 		player = new Player();
+		worldY = 0;
 		startTime = System.currentTimeMillis();
 		
 		objects = new Vector<GameObject>();
 		for(int i = 0; i < 10; i++){
 			objects.add(new Asteroid(100, 600));
 		}
+		stage = 0;
 	}
 	
 	private boolean running;
@@ -83,7 +89,7 @@ public class GameThread extends Thread{
 	 * @return
 	 */
 	public static int getWorldY(){
-		return (int) player.y;
+		return (int)(System.currentTimeMillis()-startTime)/1000;
 	}
 	
 	@SuppressLint("WrongCall")
@@ -97,7 +103,17 @@ public class GameThread extends Thread{
 		
 		//Game loop.
 		while (running) {
-			player.x -= tiltX*player.yVelocity;
+			
+			if(player.y > getWorldY() + getWorldHeight()){
+				stage++;
+				player.y = 0;
+				if(stage == 1)
+					gameSurface.loadBackground(R.drawable.bg_clouds);
+				else
+					gameSurface.loadBackground(R.drawable.bg_ground);
+			}
+			
+			player.x -= tiltX*2;
 			if(player.x < 0)
 				player.x = 0;
 			else if(player.x > getWorldWidth() - 100)
@@ -112,10 +128,17 @@ public class GameThread extends Thread{
 				GameObject object = objects.get(i);
 				Rect objectRect = new Rect((int)object.x, (int)object.y, (int)object.x + (int)object.width, (int)object.y + (int)object.height);
 				if(playerRect.intersect(objectRect)){
-					player.width += 1;
-					player.height += 1;
-					player.yVelocity += 0.5;
-					object.destroy = true;
+					if(object instanceof Asteroid){
+						player.width += 1;
+						player.height += 1;
+						player.yVelocity += 0.1;
+						object.destroy = true;
+					}else{
+						player.width -= 1;
+						player.height -= 1;
+						player.yVelocity -= 0.1;
+						object.destroy = true;
+					}
 				}
 			}
 			
@@ -132,7 +155,10 @@ public class GameThread extends Thread{
 			
 			//Add new game objects if there aren't enough.
 			if(objects.size() < 10){
-				objects.add(new Asteroid(100, (int) (player.y + 1000)));
+				if(stage == 0)
+					objects.add(new Asteroid(100, getWorldY()));
+				else if(stage == 1)
+					objects.add(new Cloud(100, getWorldY()));
 			}
 			
 			//Draw game state.

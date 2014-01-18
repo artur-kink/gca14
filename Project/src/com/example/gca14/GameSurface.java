@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -17,6 +16,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	private GameThread thread;
 	private Paint paint;
 	private Bitmap bg;
+	
 	public GameSurface(Context context) {
 		super(context);
 		
@@ -36,12 +36,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
 	@Override
 	public void surfaceCreated(SurfaceHolder arg0) {
-		BitmapFactory.Options o=new BitmapFactory.Options();
-		o.inSampleSize = 4;
-		o.inDither = false;
-		o.inPurgeable = true;
-		o.inMutable = false;
-		bg = BitmapFactory.decodeResource(getResources(), R.drawable.bg_space, o);
+		loadBackground(R.drawable.bg_space);
 		//Update GameThread screen and height information.
 		GameThread.width = getWidth();
 		GameThread.height = getHeight();
@@ -49,6 +44,15 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 		thread.start();
 	}
 
+	public void loadBackground(int id){
+		BitmapFactory.Options o=new BitmapFactory.Options();
+		o.inSampleSize = 1;
+		o.inDither = true;
+		o.inPurgeable = true;
+		o.inMutable = false;
+		bg = BitmapFactory.decodeResource(getResources(), id, o);
+	}
+	
 	@Override
 	public void surfaceDestroyed(SurfaceHolder arg0) {
 	}
@@ -59,13 +63,12 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	 */
 	protected void onDraw(Canvas canvas) {
 		//Clear canvas.
-		paint.setAntiAlias(false);
-		canvas.drawBitmap(bg, -50, 0, paint);
+		canvas.drawBitmap(bg, 0, 0, paint);
 		canvas.save();
 		
 		//Scale and translate canvas to fit current world.
 		canvas.scale(GameThread.getScale(), GameThread.getScale());
-		canvas.translate(0, - GameThread.player.y);
+		canvas.translate(0, - GameThread.getWorldY());
 		
 		
 		GameThread.player.draw(canvas);

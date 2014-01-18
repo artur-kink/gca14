@@ -1,5 +1,7 @@
 package com.example.gca14;
 
+import java.util.Random;
+
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -21,7 +23,7 @@ public class Asteroid extends GameObject {
 		x = tx;
 		y = ty;
 		xVelocity = (float) (Math.random()*5);
-		yVelocity = (float) (Math.random()*3);
+		yVelocity = (float) (Math.random()-1);
 		
 		width = 100;
 		height = 100;

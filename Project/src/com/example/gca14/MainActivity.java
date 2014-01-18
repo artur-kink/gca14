@@ -1,7 +1,12 @@
 package com.example.gca14;
 
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
@@ -18,6 +23,22 @@ public class MainActivity extends Activity {
 		// set our MainGamePanel as the View
 		setContentView(new GameSurface(this));
 		
+		((SensorManager)getSystemService(Context.SENSOR_SERVICE)).registerListener(
+			     new SensorEventListener() {    
+			        @Override  
+			        public void onSensorChanged(SensorEvent event) {
+			        	GameThread.tiltX = event.values[0];
+			        	GameThread.tiltY = event.values[1];
+			        }
+			        
+			        @Override  
+			        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+			        	
+			        }
+			    },
+			    ((SensorManager)getSystemService(Context.SENSOR_SERVICE))
+			    .getSensorList(Sensor.TYPE_ACCELEROMETER).get(0),   
+			     SensorManager.SENSOR_DELAY_NORMAL);
 	}
 
 	@Override

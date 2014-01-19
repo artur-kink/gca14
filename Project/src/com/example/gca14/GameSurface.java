@@ -119,7 +119,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 			GameThread.objects.get(i).draw(canvas);
 		}
 		
-		if(GameThread.endOfStage == true){
+		if(GameThread.endOfStage == true || GameThread.startOfStage == true){
 			paint.setARGB((int) (255*GameThread.fadeValue), 0, 0, 0);
 			canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), paint);
 		}

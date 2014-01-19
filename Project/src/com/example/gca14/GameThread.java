@@ -42,6 +42,8 @@ public class GameThread extends Thread{
 	public static final int clouds = 5;
 	
 	public static boolean endOfStage;
+	public static boolean startOfStage;
+	public static long stageStartTime;
 	public static float fadeValue;
 	
 	public GameThread(SurfaceHolder holder, GameSurface surface){
@@ -97,10 +99,13 @@ public class GameThread extends Thread{
 			stage = 0;
 		
 		endOfStage = false;
+		startOfStage = true;
+		stageStartTime = System.currentTimeMillis();
+		
 		if(stage == 0){
 			gameSurface.loadBackground(R.drawable.bg_space);
 			for(int i = 0; i < asteroids; i++)
-				objects.add(new Asteroid((int) (Math.random()*getWorldWidth()), (int) (Math.random() * getWorldHeight())));
+				objects.add(new Asteroid((int) (Math.random()*getWorldWidth()), 500 + (int) (Math.random() * getWorldHeight())));
 		}
 		else if(stage == 1){
 			player.drawFireball = true;
@@ -138,11 +143,13 @@ public class GameThread extends Thread{
 			
 			if(player.y > getWorldHeight()){
 				setStage(stage+1);
-			}else if(player.y > getWorldHeight()*0.75f){
-				fadeValue = (getWorldHeight() - player.y)/((float)getWorldHeight()*0.75f);
+			}else if(stage != 2 && player.y > getWorldHeight()*0.75){
+				fadeValue = (player.y - getWorldHeight()*0.75f)/(getWorldHeight() - getWorldHeight()*0.75f);
 				endOfStage = true;
+			}
+			
+			if(endOfStage){
 				player.y += 5;
-				
 				
 				//Update game objects.
 				for(int i = 0; i < objects.size(); i++){
@@ -154,6 +161,23 @@ public class GameThread extends Thread{
 						i--;
 					}
 				}
+				
+				//Draw game state.
+				gameCanvas = surfaceHolder.lockCanvas();
+				if(gameCanvas != null){
+					synchronized (surfaceHolder) {
+						gameSurface.onDraw(gameCanvas);
+					}
+					surfaceHolder.unlockCanvasAndPost(gameCanvas);
+				}
+				
+				continue;
+			}else if(startOfStage){
+				if(System.currentTimeMillis() - stageStartTime > 3000){
+					startOfStage = false;
+				}
+				player.y = (((float)(System.currentTimeMillis() - stageStartTime))/3000.0f)*100;
+				fadeValue = 1.0f - (((float)(System.currentTimeMillis() - stageStartTime))/3000.0f);
 				
 				//Draw game state.
 				gameCanvas = surfaceHolder.lockCanvas();
@@ -198,6 +222,7 @@ public class GameThread extends Thread{
 						}
 						object.destroy = true;
 					}else if(object instanceof Cloud && ((Cloud)object).collided == false){
+						AudioPlayer.playSound(AudioPlayer.hitcloud);
 						player.decreaseSize(1);
 						((Cloud)object).collided = true;
 					}else if(object instanceof Unicorn){

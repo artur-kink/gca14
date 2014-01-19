@@ -22,7 +22,7 @@ public class Player extends GameObject {
 	
 	public Player(){
 		x = y = 0;
-		yVelocity = (float) 0.1;
+		yVelocity = (float) 0.2;
 		
 		width = GameSurface.playerAsteroid.getWidth()*0.5f;
 		
@@ -44,14 +44,6 @@ public class Player extends GameObject {
 		else if(x > GameThread.getWorldWidth() - width)
 			x = GameThread.getWorldWidth() - width;
 		
-		if(drawFireball){
-			if(System.currentTimeMillis() - lastAnimationUpdate > 150){
-				animation++;
-				if(animation >= 2)
-					animation = 0;
-				lastAnimationUpdate = System.currentTimeMillis();
-			}
-		}
 	}
 
 	public void increaseSize(float mult){
@@ -81,6 +73,12 @@ public class Player extends GameObject {
 		canvas.drawBitmap(GameSurface.playerAsteroid, m, paint);
 		
 		if(drawFireball){
+			if(System.currentTimeMillis() - lastAnimationUpdate > 150){
+				animation++;
+				if(animation >= 2)
+					animation = 0;
+				lastAnimationUpdate = System.currentTimeMillis();
+			}
 			m = new Matrix();
 			m.preScale(scale*1.95f, scale*1.95f);
 			m.postTranslate(x-(scale*1.95f*20), y-(scale*1.95f*160));

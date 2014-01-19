@@ -17,6 +17,7 @@ public class Asteroid extends GameObject {
 	private float rotationSpeed;
 	private float rotation;
 	
+	public boolean redAsteroid;
 	private int asteroidImage;
 	
 	private Paint paint;
@@ -40,6 +41,10 @@ public class Asteroid extends GameObject {
 		
 		scale = width/GameSurface.asteroids[asteroidImage].getWidth();
 		height = GameSurface.asteroids[asteroidImage].getHeight()*scale;
+		
+		if(Math.random() > 0.8){
+			redAsteroid = true;
+		}
 		
 		paint = new Paint();
 	}
@@ -69,7 +74,11 @@ public class Asteroid extends GameObject {
 		m.postRotate(rotation, scale*GameSurface.asteroids[asteroidImage].getWidth()/2,
 				scale*GameSurface.asteroids[asteroidImage].getHeight()/2);
 		m.postTranslate(x, y);
-		canvas.drawBitmap(GameSurface.asteroids[asteroidImage], m, paint);
+		if(redAsteroid){
+			canvas.drawBitmap(GameSurface.redAsteroids[asteroidImage], m, paint);
+		}else{
+			canvas.drawBitmap(GameSurface.asteroids[asteroidImage], m, paint);
+		}
 		
 		if(GameThread.debug){
 			paint.setColor(0xFFFF0000);

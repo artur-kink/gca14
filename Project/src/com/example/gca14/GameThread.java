@@ -164,10 +164,14 @@ public class GameThread extends Thread{
 				Rect objectRect = object.getCollisionRect();
 				if(playerRect.intersect(objectRect)){
 					if(object instanceof Asteroid){
-						player.increaseSize();
+						if(((Asteroid)object).redAsteroid){
+							player.decreaseSize(5);
+						}else{
+							player.increaseSize(1);
+						}
 						object.destroy = true;
 					}else if(object instanceof Cloud && ((Cloud)object).collided == false){
-						player.decreaseSize();
+						player.decreaseSize(1);
 						((Cloud)object).collided = true;
 					}
 				}

@@ -19,6 +19,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public static final int numAsteroids = 3;
 	public static Bitmap asteroids[];
+	public static Bitmap redAsteroids[];
 	public static Bitmap playerAsteroid;
 	public static Bitmap playerFireball[];
 	
@@ -48,6 +49,11 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 		asteroids[0] = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid1);
 		asteroids[1] = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid2);
 		asteroids[2] = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid3);
+		
+		redAsteroids = new Bitmap[numAsteroids];
+		redAsteroids[0] = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid1_red);
+		redAsteroids[1] = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid2_red);
+		redAsteroids[2] = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid3_red);
 		
 		playerAsteroid = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid_player);
 		playerFireball = new Bitmap[2];

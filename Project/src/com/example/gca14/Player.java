@@ -51,18 +51,17 @@ public class Player extends GameObject {
 					animation = 0;
 				lastAnimationUpdate = System.currentTimeMillis();
 			}
-			
 		}
 	}
 
-	public void increaseSize(){
-		width += 2;
+	public void increaseSize(float mult){
+		width += 2*mult;
 		yVelocity += 0.05f;
 		updateSize();
 	}
 	
-	public void decreaseSize(){
-		width -= 2;
+	public void decreaseSize(float mult){
+		width -= 2*mult;
 		//yVelocity -= 0.05f;
 		updateSize();
 	}

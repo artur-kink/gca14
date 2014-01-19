@@ -5,6 +5,7 @@ import java.util.Vector;
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.media.MediaPlayer;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
@@ -48,6 +49,8 @@ public class GameThread extends Thread{
 	public static long stageStartTime;
 	public static float fadeValue;
 	
+	MediaPlayer mPlayer;
+	
 	public GameThread(SurfaceHolder holder, GameSurface surface){
 		surfaceHolder = holder;
 		gameSurface = surface;
@@ -61,6 +64,8 @@ public class GameThread extends Thread{
 		gameSurface.loadBackground(R.drawable.title);
 		stage = 0;
 		endOfStage = false;
+		
+		 mPlayer = MediaPlayer.create(AudioPlayer.context, R.raw.exhilarate);
 	}
 	
 	public static void onTouchEvent(MotionEvent event){
@@ -165,7 +170,8 @@ public class GameThread extends Thread{
 		Canvas gameCanvas = null;
 		running = true;
 		
-		AudioPlayer.playSound(AudioPlayer.exhilarate);
+		mPlayer.setVolume(0.25f, 0.25f);
+		mPlayer.start();
 		
 		//Game loop.
 		while (running) {
@@ -227,19 +233,19 @@ public class GameThread extends Thread{
 							continue;
 						}
 						
-						//Play random hit sfx.
-						int rand = (int) (Math.random()*3);
-						if(rand < 1){
-							AudioPlayer.playSound(AudioPlayer.hit1);
-						}else if(rand < 2){
-							AudioPlayer.playSound(AudioPlayer.hit2);
-						}else{
-							AudioPlayer.playSound(AudioPlayer.hit3);
-						}
-						
 						if(((Asteroid)object).redAsteroid){
+							AudioPlayer.playSound(AudioPlayer.die);
 							player.decreaseSize(5);
 						}else{
+							//Play random hit sfx.
+							int rand = (int) (Math.random()*3);
+							if(rand < 1){
+								AudioPlayer.playSound(AudioPlayer.hit1);
+							}else if(rand < 2){
+								AudioPlayer.playSound(AudioPlayer.hit2);
+							}else{
+								AudioPlayer.playSound(AudioPlayer.hit3);
+							}
 							player.increaseSize(1);
 						}
 						((Asteroid) object).smoke = true;

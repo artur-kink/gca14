@@ -19,6 +19,7 @@ public class AudioPlayer {
 	public static int hit2;
 	public static int hit3;
 	public static int hitcloud;
+	public static int die;
 	
 	public static int exhilarate;
 	
@@ -33,6 +34,7 @@ public class AudioPlayer {
 	     hit3 = soundPool.load(context, com.example.gca14.R.raw.hit3, 1);
 	     hitcloud = soundPool.load(context, com.example.gca14.R.raw.hitcloud, 1);
 	     
+	     die = soundPool.load(context, com.example.gca14.R.raw.die, 1);
 	     //exhilarate = soundPool.load(context, com.example.gca14.R.raw.exhilarate, 1);
 	}
 	          

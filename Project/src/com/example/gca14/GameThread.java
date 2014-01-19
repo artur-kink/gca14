@@ -13,7 +13,7 @@ import android.view.SurfaceHolder;
  */
 public class GameThread extends Thread{
 	
-	public static final boolean debug = true;
+	public static final boolean debug = false;
 	
 	/** Current x tilt value of device. */
 	public static float tiltX;
@@ -37,6 +37,9 @@ public class GameThread extends Thread{
 	public static Vector<GameObject> objects;
 	
 	public static int stage;
+	
+	public static final int asteroids = 10;
+	public static final int clouds = 4;
 	
 	public GameThread(SurfaceHolder holder, GameSurface surface){
 		surfaceHolder = holder;
@@ -81,12 +84,24 @@ public class GameThread extends Thread{
 		return (int) (height);
 	}
 	
-	/**
-	 * Get Y position of world.
-	 * @return
-	 */
-	public static int getWorldY(){
-		return (int)(System.currentTimeMillis()-startTime)/1000;
+	public void setStage(int s){
+		stage = s;
+		player.y = 0;
+		objects.clear();
+		
+		if(stage == 0){
+			gameSurface.loadBackground(R.drawable.bg_space);
+			for(int i = 0; i < asteroids; i++)
+				objects.add(new Asteroid((int) (Math.random()*getWorldWidth()), (int) (Math.random() * getWorldHeight())));
+		}
+		else if(stage == 1){
+			gameSurface.loadBackground(R.drawable.bg_clouds);
+			for(int i = 0; i < clouds; i++)
+				objects.add(new Cloud((int) (Math.random()*getWorldWidth()), 500 + (int) (Math.random() * getWorldHeight())));
+		}
+		else{
+			gameSurface.loadBackground(R.drawable.bg_ground);
+		}
 	}
 	
 	@SuppressLint("WrongCall")
@@ -98,23 +113,17 @@ public class GameThread extends Thread{
 		Canvas gameCanvas = null;
 		running = true;
 		
-		for(int i = 0; i < 10; i++){
-			objects.add(new Asteroid((int) (Math.random() * getWorldWidth()), (int) (Math.random() *(getWorldY() + getWorldHeight() + 100))));
-		}
+		setStage(0);
 		
 		//Game loop.
 		while (running) {
 			
-			if(player.y > getWorldY() + getWorldHeight()){
-				stage++;
-				player.y = 0;
-				if(stage == 1)
-					gameSurface.loadBackground(R.drawable.bg_clouds);
-				else
-					gameSurface.loadBackground(R.drawable.bg_ground);
+			if(player.y > getWorldHeight()){
+				setStage(stage+1);
 			}
 			
-			player.x -= tiltX*2;
+			player.x -= tiltX*5;
+			player.rVelocity = tiltX*-2;
 			
 			player.update();
 			
@@ -147,11 +156,15 @@ public class GameThread extends Thread{
 			}
 			
 			//Add new game objects if there aren't enough.
-			if(objects.size() < 15){
-				if(stage == 0)
-					objects.add(new Asteroid((int) (Math.random()*getWorldWidth()), getWorldY() + getWorldHeight() + 100));
-				else if(stage == 1)
-					objects.add(new Cloud((int) (Math.random()*getWorldWidth()), getWorldY() + getWorldHeight() + 100));
+			if(stage == 0){
+				while(objects.size() < asteroids){
+					objects.add(new Asteroid((int) (Math.random()*getWorldWidth()), getWorldHeight() + 100));
+				}
+			}else if(stage == 1){
+				while(objects.size() < clouds){
+					objects.add(new Cloud((int) (Math.random()*getWorldWidth()), getWorldHeight() + 100));
+				}
+				
 			}
 			
 			//Draw game state.

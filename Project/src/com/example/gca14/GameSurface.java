@@ -21,7 +21,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	public static Bitmap asteroids[];
 	public static Bitmap playerAsteroid;
 	
-	public static final int numClouds = 1;
+	public static final int numClouds = 3;
 	public static Bitmap clouds[];
 	
 	public GameSurface(Context context) {
@@ -52,8 +52,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 		
 		clouds = new Bitmap[numClouds];
 		clouds[0] = BitmapFactory.decodeResource(getResources(), R.drawable.cloud1);
-		
-		loadBackground(R.drawable.bg_space);
+		clouds[1] = BitmapFactory.decodeResource(getResources(), R.drawable.cloud2);
+		clouds[2] = BitmapFactory.decodeResource(getResources(), R.drawable.cloud3);
 		
 		thread = new GameThread(getHolder(), this);
 		//Update GameThread screen and height information.
@@ -90,8 +90,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 		canvas.save();
 		
 		//Translate canvas to fit current world.
-		canvas.translate(0, - GameThread.getWorldY());
-		
+		canvas.translate(0, 0);
 		
 		GameThread.player.draw(canvas);
 		

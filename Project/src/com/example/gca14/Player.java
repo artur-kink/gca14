@@ -12,6 +12,7 @@ public class Player extends GameObject {
 
 	public float yVelocity;
 	public float rotation;
+	public float rVelocity;
 	public float scale;
 	
 	public Player(){
@@ -24,13 +25,13 @@ public class Player extends GameObject {
 		height = GameSurface.playerAsteroid.getHeight()*scale;
 		
 		rotation = 0;
+		rVelocity = 0;
 	}
 	
 	@Override
 	public void update() {
 		y += yVelocity;
-		rotation += 2.0f;
-		
+		rotation += rVelocity;
 		if(x < 0)
 			x = 0;
 		else if(x > GameThread.getWorldWidth() - width)
@@ -46,7 +47,7 @@ public class Player extends GameObject {
 	}
 	
 	public void decreaseSize(){
-		width += 2;
+		width -= 2;
 		scale = width/GameSurface.playerAsteroid.getWidth();
 		yVelocity -= 0.05f;
 		height = GameSurface.playerAsteroid.getHeight()*scale;

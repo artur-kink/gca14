@@ -27,8 +27,8 @@ public class Asteroid extends GameObject {
 		destroy = false;
 		x = tx;
 		y = ty;
-		xVelocity = (float) (Math.random()*5);
-		yVelocity = (float) (Math.random()-1.5)*20;
+		xVelocity = (float) ((Math.random() - 0.5f)*5);
+		yVelocity = (float) (Math.random()-2.5)*20;
 		
 		rotation = 0;
 		rotationSpeed = (float) Math.random() - 0.5f;
@@ -50,7 +50,7 @@ public class Asteroid extends GameObject {
 		
 		rotation += rotationSpeed;
 		
-		if(y + height < GameThread.getWorldY()){
+		if(y + height < 0){
 			destroy = true;
 			return;
 		}
@@ -63,7 +63,7 @@ public class Asteroid extends GameObject {
 	}
 	
 	public void draw(Canvas canvas){
-		paint.setColor(0xFFFF0000);
+		
 		Matrix m = new Matrix();
 		m.preScale(scale, scale);
 		m.postRotate(rotation, scale*GameSurface.asteroids[asteroidImage].getWidth()/2,
@@ -71,7 +71,9 @@ public class Asteroid extends GameObject {
 		m.postTranslate(x, y);
 		canvas.drawBitmap(GameSurface.asteroids[asteroidImage], m, paint);
 		
-		if(GameThread.debug)
+		if(GameThread.debug){
+			paint.setColor(0xFFFF0000);
 			canvas.drawText("(" + x + "x" + y + ")", x, y - 10, paint);
+		}
 	}
 }

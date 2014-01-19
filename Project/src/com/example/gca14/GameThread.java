@@ -49,7 +49,7 @@ public class GameThread extends Thread{
 	public static long stageStartTime;
 	public static float fadeValue;
 	
-	MediaPlayer mPlayer;
+	public static MediaPlayer mPlayer;
 	
 	public GameThread(SurfaceHolder holder, GameSurface surface){
 		surfaceHolder = holder;
@@ -65,7 +65,7 @@ public class GameThread extends Thread{
 		stage = 0;
 		endOfStage = false;
 		
-		 mPlayer = MediaPlayer.create(AudioPlayer.context, R.raw.exhilarate);
+		mPlayer = MediaPlayer.create(AudioPlayer.context, R.raw.exhilarate);
 	}
 	
 	public static void onTouchEvent(MotionEvent event){
@@ -83,10 +83,17 @@ public class GameThread extends Thread{
 	}
 	
 	private boolean running;
-	public void setRunning(boolean running) {
-		this.running = running;
+
+	public void setRunning(boolean r){
+		running = r;
+		if(running == false){
+			mPlayer.stop();
+		}else{
+			mPlayer.setVolume(0.15f, 0.15f);
+			mPlayer.setLooping(true);
+			mPlayer.start();
+		}
 	}
-	
 	
 	/**
 	 * Return scale of world.
@@ -118,8 +125,11 @@ public class GameThread extends Thread{
 		stage = s;
 		player.y = -player.height;
 		objects.clear();
-		if(stage > 2)
+		if(stage > 2){
 			stage = 0;
+			startScreen = true;
+			return;
+		}
 		
 		endOfStage = false;
 		startOfStage = true;
@@ -167,12 +177,11 @@ public class GameThread extends Thread{
 	 * Main game loop.
 	 */
 	public void run() {
+		if(!running)
+			return;
+		
 		Canvas gameCanvas = null;
-		running = true;
-		
-		mPlayer.setVolume(0.25f, 0.25f);
-		mPlayer.start();
-		
+
 		//Game loop.
 		while (running) {
 			

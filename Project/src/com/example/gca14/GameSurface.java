@@ -28,7 +28,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	public static final int numClouds = 3;
 	public static Bitmap clouds[];
 	
-	public static final int numUnicorns = 1;
+	public static final int numUnicorns = 3;
 	public static Bitmap unicorns[];
 	
 	public GameSurface(Context context) {
@@ -41,16 +41,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 		paint = new Paint();
 		paint.setTextSize(20);
 		paint.setColor(0xFFFFFFFF);
-		
-		setFocusable(true);
-	}
-
-	@Override
-	public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
-	}
-
-	@Override
-	public void surfaceCreated(SurfaceHolder arg0) {
 		
 		asteroids = new Bitmap[numAsteroids];
 		asteroids[0] = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid1);
@@ -79,13 +69,29 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 		
 		unicorns = new Bitmap[numUnicorns];
 		unicorns[0] = BitmapFactory.decodeResource(getResources(), R.drawable.unicorn_1);
+		unicorns[1] = BitmapFactory.decodeResource(getResources(), R.drawable.unicorn_2);
+		unicorns[2] = BitmapFactory.decodeResource(getResources(), R.drawable.unicorn_3);
 		
 		thread = new GameThread(getHolder(), this);
+		
+		setFocusable(true);
+	}
+
+	@Override
+	public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
+	}
+
+	@Override
+	public void surfaceCreated(SurfaceHolder arg0) {
+		
 		//Update GameThread screen and height information.
 		GameThread.width = getWidth();
 		GameThread.height = getHeight();
 		
-		thread.start();
+		thread.setRunning(true);
+		if(!thread.isAlive()){
+			thread.start();
+		}
 	}
 
 	public void loadBackground(int id){
@@ -99,6 +105,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	
 	@Override
 	public void surfaceDestroyed(SurfaceHolder arg0) {
+		thread.setRunning(true);
+		GameThread.mPlayer.stop();
 	}
 	
 	@Override

@@ -21,6 +21,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	public static final int numAsteroids = 3;
 	public static Bitmap asteroids[];
 	public static Bitmap redAsteroids[];
+	public static Bitmap smoke[];
 	public static Bitmap playerAsteroid;
 	public static Bitmap playerFireball[];
 	
@@ -61,6 +62,11 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 		redAsteroids[1] = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid2_red);
 		redAsteroids[2] = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid3_red);
 		
+		smoke = new Bitmap[numAsteroids];
+		smoke[0] = BitmapFactory.decodeResource(getResources(), R.drawable.smoke1);
+		smoke[1] = BitmapFactory.decodeResource(getResources(), R.drawable.smoke2);
+		smoke[2] = BitmapFactory.decodeResource(getResources(), R.drawable.smoke3);
+		
 		playerAsteroid = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid_player);
 		playerFireball = new Bitmap[2];
 		playerFireball[0] = BitmapFactory.decodeResource(getResources(), R.drawable.fireball1);
@@ -100,8 +106,13 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	 * GameSurface draw method. Game is drawn in this method.
 	 */
 	protected void onDraw(Canvas canvas) {
-		//Clear canvas.
-		float bgScale = ((float)getWidth())/((float)bg.getWidth());
+		
+		//Calculate background scale.
+		float bgScale = ((float)getHeight())/((float)bg.getHeight());
+		if(bg.getWidth()*bgScale < getWidth()){
+			bgScale = ((float)getWidth())/((float)bg.getWidth());
+		}
+		
 		paint.setARGB(255, 255, 255, 255);
 		
 		canvas.save();

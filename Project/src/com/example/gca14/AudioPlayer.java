@@ -20,6 +20,8 @@ public class AudioPlayer {
 	public static int hit3;
 	public static int hitcloud;
 	
+	public static int exhilarate;
+	
 	/**
 	 * Initializes audio and sound player.
 	 * Must be called before AudioPlayer can be used.
@@ -30,6 +32,8 @@ public class AudioPlayer {
 	     hit2 = soundPool.load(context, com.example.gca14.R.raw.hit2, 1);
 	     hit3 = soundPool.load(context, com.example.gca14.R.raw.hit3, 1);
 	     hitcloud = soundPool.load(context, com.example.gca14.R.raw.hitcloud, 1);
+	     
+	     //exhilarate = soundPool.load(context, com.example.gca14.R.raw.exhilarate, 1);
 	}
 	          
 	public static void playSound(int id) {

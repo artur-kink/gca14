@@ -138,6 +138,8 @@ public class GameThread extends Thread{
 		
 		setStage(0);
 		
+		AudioPlayer.playSound(AudioPlayer.exhilarate);
+		
 		//Game loop.
 		while (running) {
 			
@@ -205,6 +207,10 @@ public class GameThread extends Thread{
 				if(playerRect.intersect(objectRect)){
 					if(object instanceof Asteroid){
 						
+						if(((Asteroid)object).smoke){
+							continue;
+						}
+						
 						//Play random hit sfx.
 						int rand = (int) (Math.random()*3);
 						if(rand < 1){
@@ -220,7 +226,8 @@ public class GameThread extends Thread{
 						}else{
 							player.increaseSize(1);
 						}
-						object.destroy = true;
+						((Asteroid) object).smoke = true;
+						((Asteroid)object).smokeTime = System.currentTimeMillis();
 					}else if(object instanceof Cloud && ((Cloud)object).collided == false){
 						AudioPlayer.playSound(AudioPlayer.hitcloud);
 						player.decreaseSize(1);

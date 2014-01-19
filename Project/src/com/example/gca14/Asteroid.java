@@ -24,6 +24,9 @@ public class Asteroid extends GameObject {
 	
 	public float scale;
 	
+	public boolean smoke;
+	public long smokeTime;
+	
 	public Asteroid(int tx, int ty){
 		destroy = false;
 		x = tx;
@@ -46,6 +49,9 @@ public class Asteroid extends GameObject {
 			redAsteroid = true;
 		}
 		
+		smoke = false;
+		smokeTime = 0;
+		
 		paint = new Paint();
 	}
 	
@@ -60,6 +66,9 @@ public class Asteroid extends GameObject {
 			return;
 		}
 		
+		if(smoke && (System.currentTimeMillis() - smokeTime) > 550)
+			destroy = true;
+		
 		if(x >= GameThread.getWorldWidth() && x > 0){
 			xVelocity = (float) (Math.random()*-5);
 		}else if(x <= 0 && x < 0){
@@ -68,14 +77,17 @@ public class Asteroid extends GameObject {
 	}
 	
 	public void draw(Canvas canvas){
-		
+		paint.setColor(0xFFFFFFFF);
 		Matrix m = new Matrix();
 		m.preScale(scale, scale);
 		m.postRotate(rotation, scale*GameSurface.asteroids[asteroidImage].getWidth()/2,
 				scale*GameSurface.asteroids[asteroidImage].getHeight()/2);
 		m.postTranslate(x, y);
-		if(redAsteroid){
-			canvas.drawBitmap(GameSurface.redAsteroids[asteroidImage], m, paint);
+		if(smoke){
+			paint.setAlpha((int) (255*(1.0f - ((float)(System.currentTimeMillis() - smokeTime))/600.0f)));
+			canvas.drawBitmap(GameSurface.smoke[asteroidImage], m, paint);
+		}else if(redAsteroid){
+				canvas.drawBitmap(GameSurface.redAsteroids[asteroidImage], m, paint);
 		}else{
 			canvas.drawBitmap(GameSurface.asteroids[asteroidImage], m, paint);
 		}

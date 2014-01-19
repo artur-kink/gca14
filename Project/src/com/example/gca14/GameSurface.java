@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -26,10 +27,15 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	public static final int numClouds = 3;
 	public static Bitmap clouds[];
 	
+	public static final int numUnicorns = 1;
+	public static Bitmap unicorns[];
+	
 	public GameSurface(Context context) {
 		super(context);
 		
 		getHolder().addCallback(this);
+		
+		AudioPlayer.context = context;
 		
 		paint = new Paint();
 		paint.setTextSize(20);
@@ -65,6 +71,9 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 		clouds[1] = BitmapFactory.decodeResource(getResources(), R.drawable.cloud2);
 		clouds[2] = BitmapFactory.decodeResource(getResources(), R.drawable.cloud3);
 		
+		unicorns = new Bitmap[numUnicorns];
+		unicorns[0] = BitmapFactory.decodeResource(getResources(), R.drawable.unicorn_1);
+		
 		thread = new GameThread(getHolder(), this);
 		//Update GameThread screen and height information.
 		GameThread.width = getWidth();
@@ -93,6 +102,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	protected void onDraw(Canvas canvas) {
 		//Clear canvas.
 		float bgScale = ((float)getWidth())/((float)bg.getWidth());
+		paint.setARGB(255, 255, 255, 255);
+		
 		canvas.save();
 		canvas.scale(bgScale, bgScale);
 		canvas.drawBitmap(bg, 0, 0, paint);
@@ -106,6 +117,11 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 		
 		for(int i = 0; i < GameThread.objects.size(); i++){
 			GameThread.objects.get(i).draw(canvas);
+		}
+		
+		if(GameThread.endOfStage == true){
+			paint.setARGB((int) (255*GameThread.fadeValue), 0, 0, 0);
+			canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), paint);
 		}
 		
 		//Reset canvas offset.

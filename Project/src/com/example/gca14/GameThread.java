@@ -41,6 +41,9 @@ public class GameThread extends Thread{
 	public static final int asteroids = 7;
 	public static final int clouds = 5;
 	
+	public static boolean endOfStage;
+	public static float fadeValue;
+	
 	public GameThread(SurfaceHolder holder, GameSurface surface){
 		surfaceHolder = holder;
 		gameSurface = surface;
@@ -48,8 +51,10 @@ public class GameThread extends Thread{
 		worldY = 0;
 		startTime = System.currentTimeMillis();
 		
+		AudioPlayer.initSounds();
 		objects = new Vector<GameObject>();
 		stage = 0;
+		endOfStage = false;
 	}
 	
 	private boolean running;
@@ -88,7 +93,10 @@ public class GameThread extends Thread{
 		stage = s;
 		player.y = 0;
 		objects.clear();
+		if(stage > 2)
+			stage = 0;
 		
+		endOfStage = false;
 		if(stage == 0){
 			gameSurface.loadBackground(R.drawable.bg_space);
 			for(int i = 0; i < asteroids; i++)
@@ -96,14 +104,20 @@ public class GameThread extends Thread{
 		}
 		else if(stage == 1){
 			player.drawFireball = true;
-			player.yVelocity *= 0.25f;
-			player.width *= 0.25f;
+			player.yVelocity *= 0.65f;
+			player.width *= 0.45f;
 			player.updateSize();
 			gameSurface.loadBackground(R.drawable.bg_clouds);
 			for(int i = 0; i < clouds; i++)
 				objects.add(new Cloud((int) (Math.random()*getWorldWidth()), 500 + (int) (Math.random() * getWorldHeight())));
 		}
 		else{
+			player.width *= 2.25f;
+			player.yVelocity = 15;
+			player.updateSize();
+			player.drawFireball = true;
+			for(int i = 0; i < 5; i++)
+				objects.add(new Unicorn((int) (Math.random()*getWorldWidth()), (int) (getWorldHeight() - (Math.random() * getWorldHeight()*0.24) - GameSurface.unicorns[0].getHeight())));
 			gameSurface.loadBackground(R.drawable.bg_ground);
 		}
 	}
@@ -125,6 +139,8 @@ public class GameThread extends Thread{
 			if(player.y > getWorldHeight()){
 				setStage(stage+1);
 			}else if(player.y > getWorldHeight()*0.75f){
+				fadeValue = (getWorldHeight() - player.y)/((float)getWorldHeight()*0.75f);
+				endOfStage = true;
 				player.y += 5;
 				
 				
@@ -164,6 +180,17 @@ public class GameThread extends Thread{
 				Rect objectRect = object.getCollisionRect();
 				if(playerRect.intersect(objectRect)){
 					if(object instanceof Asteroid){
+						
+						//Play random hit sfx.
+						int rand = (int) (Math.random()*3);
+						if(rand < 1){
+							AudioPlayer.playSound(AudioPlayer.hit1);
+						}else if(rand < 2){
+							AudioPlayer.playSound(AudioPlayer.hit2);
+						}else{
+							AudioPlayer.playSound(AudioPlayer.hit3);
+						}
+						
 						if(((Asteroid)object).redAsteroid){
 							player.decreaseSize(5);
 						}else{
@@ -173,6 +200,8 @@ public class GameThread extends Thread{
 					}else if(object instanceof Cloud && ((Cloud)object).collided == false){
 						player.decreaseSize(1);
 						((Cloud)object).collided = true;
+					}else if(object instanceof Unicorn){
+						
 					}
 				}
 			}
@@ -195,7 +224,7 @@ public class GameThread extends Thread{
 				}
 			}else if(stage == 1){
 				while(objects.size() < clouds){
-					objects.add(new Cloud((int) (Math.random()*getWorldWidth()), (int) (getWorldHeight() + 300 * Math.random())));
+					objects.add(new Cloud((int) (Math.random()*getWorldWidth()) - 75, (int) (getWorldHeight() + 300 * Math.random())));
 				}
 			}
 			

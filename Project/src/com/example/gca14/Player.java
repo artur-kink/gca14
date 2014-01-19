@@ -32,7 +32,7 @@ public class Player extends GameObject {
 		rotation = 0;
 		rVelocity = 0;
 		animation = 0;
-		drawFireball = true;
+		drawFireball = false;
 	}
 	
 	@Override
@@ -80,10 +80,12 @@ public class Player extends GameObject {
 		m.postTranslate(x, y);
 		canvas.drawBitmap(GameSurface.playerAsteroid, m, paint);
 		
-		m = new Matrix();
-		m.preScale(scale*1.95f, scale*1.95f);
-		m.postTranslate(x-(scale*1.95f*20), y-(scale*1.95f*160));
-		canvas.drawBitmap(GameSurface.playerFireball[animation], m, paint);
+		if(drawFireball){
+			m = new Matrix();
+			m.preScale(scale*1.95f, scale*1.95f);
+			m.postTranslate(x-(scale*1.95f*20), y-(scale*1.95f*160));
+			canvas.drawBitmap(GameSurface.playerFireball[animation], m, paint);
+		}
 	}
 	
 }

@@ -119,6 +119,11 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 		canvas.scale(bgScale, bgScale);
 		canvas.drawBitmap(bg, 0, 0, paint);
 		canvas.restore();
+		
+		if(GameThread.startScreen){
+			return;
+		}
+		
 		canvas.save();
 		
 		//Translate canvas to fit current world.

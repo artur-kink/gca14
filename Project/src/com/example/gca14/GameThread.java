@@ -5,6 +5,7 @@ import java.util.Vector;
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
 /**
@@ -29,13 +30,14 @@ public class GameThread extends Thread{
 	public static float worldY;
 	
 	/** Surface the game is drawn on. */
-	private GameSurface gameSurface;
+	private static GameSurface gameSurface;
 	private SurfaceHolder surfaceHolder;
 	
 	public static Player player;
 	
 	public static Vector<GameObject> objects;
 	
+	public static boolean startScreen;
 	public static int stage;
 	
 	public static final int asteroids = 7;
@@ -55,8 +57,24 @@ public class GameThread extends Thread{
 		
 		AudioPlayer.initSounds();
 		objects = new Vector<GameObject>();
+		startScreen = true;
+		gameSurface.loadBackground(R.drawable.title);
 		stage = 0;
 		endOfStage = false;
+	}
+	
+	public static void onTouchEvent(MotionEvent event){
+		if(startScreen){
+			setStage(0);
+			startScreen = false;
+		}
+		/*int x = (int)event.getX();
+	    int y = (int)event.getY();
+	    switch (event.getAction()) {
+	        case MotionEvent.ACTION_DOWN:
+	        case MotionEvent.ACTION_MOVE:
+	        case MotionEvent.ACTION_UP:
+	    }*/
 	}
 	
 	private boolean running;
@@ -91,9 +109,9 @@ public class GameThread extends Thread{
 		return (int) (height);
 	}
 	
-	public void setStage(int s){
+	public static void setStage(int s){
 		stage = s;
-		player.y = 0;
+		player.y = -player.height;
 		objects.clear();
 		if(stage > 2)
 			stage = 0;
@@ -126,8 +144,19 @@ public class GameThread extends Thread{
 			gameSurface.loadBackground(R.drawable.bg_ground);
 		}
 	}
-	
+
 	@SuppressLint("WrongCall")
+	private void drawCall(Canvas gameCanvas){
+		//Draw game state.
+		gameCanvas = surfaceHolder.lockCanvas();
+		if(gameCanvas != null){
+			synchronized (surfaceHolder) {
+				gameSurface.onDraw(gameCanvas);
+			}
+			surfaceHolder.unlockCanvasAndPost(gameCanvas);
+		}
+	}
+	
 	@Override
 	/**
 	 * Main game loop.
@@ -136,12 +165,15 @@ public class GameThread extends Thread{
 		Canvas gameCanvas = null;
 		running = true;
 		
-		setStage(0);
-		
 		AudioPlayer.playSound(AudioPlayer.exhilarate);
 		
 		//Game loop.
 		while (running) {
+			
+			if(startScreen){
+				drawCall(gameCanvas);
+				continue;
+			}
 			
 			if(player.y > getWorldHeight()){
 				setStage(stage+1);
@@ -164,15 +196,7 @@ public class GameThread extends Thread{
 					}
 				}
 				
-				//Draw game state.
-				gameCanvas = surfaceHolder.lockCanvas();
-				if(gameCanvas != null){
-					synchronized (surfaceHolder) {
-						gameSurface.onDraw(gameCanvas);
-					}
-					surfaceHolder.unlockCanvasAndPost(gameCanvas);
-				}
-				
+				drawCall(gameCanvas);
 				continue;
 			}else if(startOfStage){
 				if(System.currentTimeMillis() - stageStartTime > 3000){
@@ -181,15 +205,7 @@ public class GameThread extends Thread{
 				player.y = (((float)(System.currentTimeMillis() - stageStartTime))/3000.0f)*100;
 				fadeValue = 1.0f - (((float)(System.currentTimeMillis() - stageStartTime))/3000.0f);
 				
-				//Draw game state.
-				gameCanvas = surfaceHolder.lockCanvas();
-				if(gameCanvas != null){
-					synchronized (surfaceHolder) {
-						gameSurface.onDraw(gameCanvas);
-					}
-					surfaceHolder.unlockCanvasAndPost(gameCanvas);
-				}
-				
+				drawCall(gameCanvas);
 				continue;
 			}
 			
@@ -260,14 +276,7 @@ public class GameThread extends Thread{
 				}
 			}
 			
-			//Draw game state.
-			gameCanvas = surfaceHolder.lockCanvas();
-			if(gameCanvas != null){
-				synchronized (surfaceHolder) {
-					gameSurface.onDraw(gameCanvas);
-				}
-				surfaceHolder.unlockCanvasAndPost(gameCanvas);
-			}
+			drawCall(gameCanvas);
 		}
 	}
 }

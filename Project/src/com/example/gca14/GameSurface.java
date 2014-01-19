@@ -27,6 +27,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public static final int numClouds = 3;
 	public static Bitmap clouds[];
+	public static Bitmap fireClouds[][];
 	
 	public static final int numUnicorns = 3;
 	public static Bitmap unicorns[];
@@ -68,6 +69,14 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 		clouds[1] = BitmapFactory.decodeResource(getResources(), R.drawable.cloud2);
 		clouds[2] = BitmapFactory.decodeResource(getResources(), R.drawable.cloud3);
 		
+		fireClouds = new Bitmap[numClouds][2];
+		fireClouds[0][0] = BitmapFactory.decodeResource(getResources(), R.drawable.cloud1_fire1);
+		fireClouds[1][0] = BitmapFactory.decodeResource(getResources(), R.drawable.cloud2_fire1);
+		fireClouds[2][0] = BitmapFactory.decodeResource(getResources(), R.drawable.cloud3_fire1);
+		fireClouds[0][1] = BitmapFactory.decodeResource(getResources(), R.drawable.cloud1_fire2);
+		fireClouds[1][1] = BitmapFactory.decodeResource(getResources(), R.drawable.cloud2_fire2);
+		fireClouds[2][1] = BitmapFactory.decodeResource(getResources(), R.drawable.cloud3_fire2);
+		
 		unicorns = new Bitmap[numUnicorns];
 		unicorns[0] = BitmapFactory.decodeResource(getResources(), R.drawable.unicorn_1);
 		unicorns[1] = BitmapFactory.decodeResource(getResources(), R.drawable.unicorn_2);
@@ -98,8 +107,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
 	public void loadBackground(int id){
 		BitmapFactory.Options o=new BitmapFactory.Options();
-		//o.inSampleSize = 1;
-		o.inDither = true;
+		o.inSampleSize = 2;
+		o.inDither = false;
 		o.inPurgeable = true;
 		o.inMutable = false;
 		bg = BitmapFactory.decodeResource(getResources(), id, o);
@@ -130,6 +139,19 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 		canvas.drawBitmap(bg, 0, 0, paint);
 		canvas.restore();
 		
+		if(GameThread.scoreScreen){
+			paint.setTextSize(86);
+			int numKilled = 0;
+			for(int i = 0; i < GameThread.objects.size(); i++){
+				if(((Unicorn)GameThread.objects.get(i)).dead){
+					numKilled++;
+				}
+			}
+			canvas.drawText(numKilled + " SLAUGHTERED",
+					25, getHeight()/2, paint);
+			return;
+		}
+		
 		if(GameThread.startScreen){
 			return;
 		}
@@ -152,8 +174,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 		
 		//Reset canvas offset.
 		canvas.restore();
-		canvas.drawText("Time: " + (System.currentTimeMillis() - GameThread.startTime), 1, 20, paint);
-		canvas.drawText("x: " + GameThread.player.x + " y: " + GameThread.player.y, 1, 40, paint);
+		//canvas.drawText("Time: " + (System.currentTimeMillis() - GameThread.startTime), 1, 20, paint);
+		//canvas.drawText("x: " + GameThread.player.x + " y: " + GameThread.player.y, 1, 40, paint);
 	}
 	
 }

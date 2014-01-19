@@ -53,7 +53,12 @@ public class Cloud extends GameObject {
 		Matrix m = new Matrix();
 		m.preScale(scale, scale);
 		m.postTranslate(x, y);
-		canvas.drawBitmap(GameSurface.clouds[cloudImage], m, paint);
+		if(collided){
+			canvas.drawBitmap(GameSurface.fireClouds[cloudImage][GameThread.player.animation], m, paint);
+		}else{
+			canvas.drawBitmap(GameSurface.clouds[cloudImage], m, paint);
+		}
+		
 		
 		if(GameThread.debug){
 			paint.setColor(0xFF0000FF);

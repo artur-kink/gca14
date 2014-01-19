@@ -15,7 +15,7 @@ public class Player extends GameObject {
 	public float rVelocity;
 	public float scale;
 	
-	private int animation;
+	public int animation;
 	private long lastAnimationUpdate;
 	
 	public boolean drawFireball;

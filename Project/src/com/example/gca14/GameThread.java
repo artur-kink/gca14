@@ -40,10 +40,12 @@ public class GameThread extends Thread{
 	
 	public static boolean startScreen;
 	public static boolean creditScreen;
+	public static boolean scoreScreen;
 	public static int stage;
 	
 	public static final int asteroids = 7;
 	public static final int clouds = 5;
+	public static final int unicorns = 5;
 	
 	public static boolean endOfStage;
 	public static boolean startOfStage;
@@ -82,7 +84,8 @@ public class GameThread extends Thread{
 			if(!creditScreen){
 				if(x > 0.2 && x < 0.8 && y > 0.54 && y < 0.68){
 					AudioPlayer.playSound(AudioPlayer.intro);
-					setStage(2);
+					player = new Player();
+					setStage(0);
 					startScreen = false;
 				}else if(x > 0.14 && x < 0.86 && y > 0.68 && y < 0.78){
 					creditScreen = true;
@@ -92,6 +95,10 @@ public class GameThread extends Thread{
 				creditScreen = false;
 				gameSurface.loadBackground(R.drawable.title);
 			}
+		}else if(scoreScreen){
+			scoreScreen = false;
+			startScreen = true;
+			gameSurface.loadBackground(R.drawable.title);
 		}
 	}
 	
@@ -138,11 +145,6 @@ public class GameThread extends Thread{
 		stage = s;
 		player.y = -player.height;
 		objects.clear();
-		if(stage > 2){
-			stage = 0;
-			startScreen = true;
-			return;
-		}
 		
 		endOfStage = false;
 		startOfStage = true;
@@ -167,7 +169,7 @@ public class GameThread extends Thread{
 			player.yVelocity = 15;
 			player.updateSize();
 			player.drawFireball = true;
-			for(int i = 0; i < 5; i++)
+			for(int i = 0; i < unicorns; i++)
 				objects.add(new Unicorn((int) (Math.random()*getWorldWidth()), (int) (getWorldHeight() - (Math.random() * getWorldHeight()*0.24) - GameSurface.unicorns[0].getHeight())));
 			gameSurface.loadBackground(R.drawable.bg_ground);
 		}
@@ -198,13 +200,19 @@ public class GameThread extends Thread{
 		//Game loop.
 		while (running) {
 			
-			if(startScreen){
+			if(startScreen || scoreScreen){
 				drawCall(gameCanvas);
 				continue;
 			}
 			
 			if(player.y > getWorldHeight()){
-				setStage(stage+1);
+				if(stage == 2){
+					scoreScreen = true;
+					gameSurface.loadBackground(R.drawable.highscore);
+					continue;
+				}else{
+					setStage(stage+1);
+				}
 			}else if(stage != 2 && player.y > getWorldHeight()*0.75){
 				fadeValue = (player.y - getWorldHeight()*0.75f)/(getWorldHeight() - getWorldHeight()*0.75f);
 				endOfStage = true;
@@ -241,6 +249,13 @@ public class GameThread extends Thread{
 			player.rVelocity = tiltX*-2;
 			
 			player.update();
+			
+			if(player.width <=  5){
+				objects.clear();
+				scoreScreen = true;
+				gameSurface.loadBackground(R.drawable.highscore);
+				continue;
+			}
 			
 			//Create player collision rect.
 			Rect playerRect = player.getCollisionRect();

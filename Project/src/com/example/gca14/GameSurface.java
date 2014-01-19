@@ -30,6 +30,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public static final int numUnicorns = 3;
 	public static Bitmap unicorns[];
+	public static Bitmap deadUnicorn;
 	
 	public GameSurface(Context context) {
 		super(context);
@@ -71,6 +72,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 		unicorns[0] = BitmapFactory.decodeResource(getResources(), R.drawable.unicorn_1);
 		unicorns[1] = BitmapFactory.decodeResource(getResources(), R.drawable.unicorn_2);
 		unicorns[2] = BitmapFactory.decodeResource(getResources(), R.drawable.unicorn_3);
+		deadUnicorn = BitmapFactory.decodeResource(getResources(), R.drawable.unicorn_death);
 		
 		thread = new GameThread(getHolder(), this);
 		

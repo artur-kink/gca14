@@ -15,11 +15,14 @@ public class AudioPlayer {
 	/** Sound pool containing and playing audio files. */
 	private static SoundPool soundPool;
 	
+	public static int intro;
 	public static int hit1;
 	public static int hit2;
 	public static int hit3;
 	public static int hitcloud;
 	public static int die;
+	public static int unicorndead1;
+	public static int unicorndead2;
 	
 	/**
 	 * Initializes audio and sound player.
@@ -27,12 +30,17 @@ public class AudioPlayer {
 	 */
 	public static void initSounds() {
 	     soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
+	     
+	     intro = soundPool.load(context, com.example.gca14.R.raw.intro, 1);
+	     
 	     hit1 = soundPool.load(context, com.example.gca14.R.raw.hit1, 1);
 	     hit2 = soundPool.load(context, com.example.gca14.R.raw.hit2, 1);
 	     hit3 = soundPool.load(context, com.example.gca14.R.raw.hit3, 1);
 	     hitcloud = soundPool.load(context, com.example.gca14.R.raw.hitcloud, 1);
 	     
 	     die = soundPool.load(context, com.example.gca14.R.raw.die, 1);
+	     unicorndead1 = soundPool.load(context, com.example.gca14.R.raw.unicorndead1, 1);
+	     unicorndead2 = soundPool.load(context, com.example.gca14.R.raw.unicorndead2, 1);
 	}
 	          
 	public static void playSound(int id) {

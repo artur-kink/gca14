@@ -39,6 +39,7 @@ public class GameThread extends Thread{
 	public static Vector<GameObject> objects;
 	
 	public static boolean startScreen;
+	public static boolean creditScreen;
 	public static int stage;
 	
 	public static final int asteroids = 7;
@@ -61,6 +62,8 @@ public class GameThread extends Thread{
 		AudioPlayer.initSounds();
 		objects = new Vector<GameObject>();
 		startScreen = true;
+		creditScreen = false;
+		
 		gameSurface.loadBackground(R.drawable.title);
 		stage = 0;
 		endOfStage = false;
@@ -68,18 +71,28 @@ public class GameThread extends Thread{
 		mPlayer = MediaPlayer.create(AudioPlayer.context, R.raw.exhilarate);
 	}
 	
+	/**
+	 * Screen touch handler.
+	 */
 	public static void onTouchEvent(MotionEvent event){
-		if(startScreen){
-			setStage(0);
-			startScreen = false;
+		if(startScreen && event.getAction() == MotionEvent.ACTION_DOWN){
+			float x = event.getX()/width;
+			float y = event.getY()/height;
+			
+			if(!creditScreen){
+				if(x > 0.2 && x < 0.8 && y > 0.54 && y < 0.68){
+					AudioPlayer.playSound(AudioPlayer.intro);
+					setStage(2);
+					startScreen = false;
+				}else if(x > 0.14 && x < 0.86 && y > 0.68 && y < 0.78){
+					creditScreen = true;
+					gameSurface.loadBackground(R.drawable.credits);
+				}
+			}else{
+				creditScreen = false;
+				gameSurface.loadBackground(R.drawable.title);
+			}
 		}
-		/*int x = (int)event.getX();
-	    int y = (int)event.getY();
-	    switch (event.getAction()) {
-	        case MotionEvent.ACTION_DOWN:
-	        case MotionEvent.ACTION_MOVE:
-	        case MotionEvent.ACTION_UP:
-	    }*/
 	}
 	
 	private boolean running;
@@ -264,6 +277,14 @@ public class GameThread extends Thread{
 						player.decreaseSize(1);
 						((Cloud)object).collided = true;
 					}else if(object instanceof Unicorn){
+						if(!((Unicorn)object).dead){
+							if(Math.random() > 0.5f){
+								AudioPlayer.playSound(AudioPlayer.unicorndead1);
+							}else{
+								AudioPlayer.playSound(AudioPlayer.unicorndead2);
+							}
+							((Unicorn)object).dead = true;
+						}
 						
 					}
 				}

@@ -15,9 +15,13 @@ public class Unicorn extends GameObject {
 	private long lastStepIncrease;
 	private float stepAmount;
 	
+	public boolean dead;
+	
 	public Unicorn(int tx, int ty){
 		x = tx;
 		y = ty;
+		
+		dead = false;
 		
 		walkDistance = 0;
 		walkedDistance = 0;
@@ -35,6 +39,10 @@ public class Unicorn extends GameObject {
 	
 	@Override
 	public void update() {
+		
+		if(dead)
+			return;
+		
 		x += xVelocity;
 		walkedDistance += xVelocity;
 		
@@ -57,7 +65,11 @@ public class Unicorn extends GameObject {
 			m.preScale(-1, 1, GameSurface.unicorns[unicornImage].getWidth()/2, 0);
 		m.postTranslate(x, (float) (y+ Math.sin(stepAmount)*6));
 		
-		canvas.drawBitmap(GameSurface.unicorns[unicornImage], m, paint);
+		if(dead){
+			canvas.drawBitmap(GameSurface.deadUnicorn, m, paint);
+		}else{
+			canvas.drawBitmap(GameSurface.unicorns[unicornImage], m, paint);
+		}
 		
 	}
 

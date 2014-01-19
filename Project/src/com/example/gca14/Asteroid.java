@@ -28,7 +28,7 @@ public class Asteroid extends GameObject {
 		x = tx;
 		y = ty;
 		xVelocity = (float) ((Math.random() - 0.5f)*5);
-		yVelocity = (float) (Math.random()-2.5)*20;
+		yVelocity = (float) (Math.random()-2.5)*15;
 		
 		rotation = 0;
 		rotationSpeed = (float) Math.random() - 0.5f;
@@ -36,10 +36,10 @@ public class Asteroid extends GameObject {
 		
 		asteroidImage = (int) Math.round(Math.random() * (GameSurface.numAsteroids - 1));
 		
-		width = GameSurface.asteroids[asteroidImage].getWidth() - 50;
+		width = (float) (GameSurface.asteroids[asteroidImage].getWidth()*0.5f);
 		
 		scale = width/GameSurface.asteroids[asteroidImage].getWidth();
-		height = height*scale;
+		height = GameSurface.asteroids[asteroidImage].getHeight()*scale;
 		
 		paint = new Paint();
 	}

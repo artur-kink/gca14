@@ -38,8 +38,8 @@ public class GameThread extends Thread{
 	
 	public static int stage;
 	
-	public static final int asteroids = 10;
-	public static final int clouds = 4;
+	public static final int asteroids = 7;
+	public static final int clouds = 5;
 	
 	public GameThread(SurfaceHolder holder, GameSurface surface){
 		surfaceHolder = holder;
@@ -95,6 +95,10 @@ public class GameThread extends Thread{
 				objects.add(new Asteroid((int) (Math.random()*getWorldWidth()), (int) (Math.random() * getWorldHeight())));
 		}
 		else if(stage == 1){
+			player.drawFireball = true;
+			player.yVelocity *= 0.25f;
+			player.width *= 0.25f;
+			player.updateSize();
 			gameSurface.loadBackground(R.drawable.bg_clouds);
 			for(int i = 0; i < clouds; i++)
 				objects.add(new Cloud((int) (Math.random()*getWorldWidth()), 500 + (int) (Math.random() * getWorldHeight())));
@@ -120,6 +124,31 @@ public class GameThread extends Thread{
 			
 			if(player.y > getWorldHeight()){
 				setStage(stage+1);
+			}else if(player.y > getWorldHeight()*0.75f){
+				player.y += 5;
+				
+				
+				//Update game objects.
+				for(int i = 0; i < objects.size(); i++){
+					objects.get(i).update();
+					
+					//If game object is destroyed, remove it from list.
+					if(objects.get(i).destroy){
+						objects.remove(i);
+						i--;
+					}
+				}
+				
+				//Draw game state.
+				gameCanvas = surfaceHolder.lockCanvas();
+				if(gameCanvas != null){
+					synchronized (surfaceHolder) {
+						gameSurface.onDraw(gameCanvas);
+					}
+					surfaceHolder.unlockCanvasAndPost(gameCanvas);
+				}
+				
+				continue;
 			}
 			
 			player.x -= tiltX*5;
@@ -128,18 +157,18 @@ public class GameThread extends Thread{
 			player.update();
 			
 			//Create player collision rect.
-			Rect playerRect = new Rect((int)player.x, (int)player.y, (int)player.x + (int)player.width, (int)player.y + (int)player.height);
+			Rect playerRect = player.getCollisionRect();
 			//Check for player collision with game objects.
 			for(int i = 0; i < objects.size(); i++){
 				GameObject object = objects.get(i);
-				Rect objectRect = new Rect((int)object.x, (int)object.y, (int)object.x + (int)object.width, (int)object.y + (int)object.height);
+				Rect objectRect = object.getCollisionRect();
 				if(playerRect.intersect(objectRect)){
 					if(object instanceof Asteroid){
 						player.increaseSize();
 						object.destroy = true;
-					}else{
+					}else if(object instanceof Cloud && ((Cloud)object).collided == false){
 						player.decreaseSize();
-						object.destroy = true;
+						((Cloud)object).collided = true;
 					}
 				}
 			}
@@ -162,9 +191,8 @@ public class GameThread extends Thread{
 				}
 			}else if(stage == 1){
 				while(objects.size() < clouds){
-					objects.add(new Cloud((int) (Math.random()*getWorldWidth()), getWorldHeight() + 100));
+					objects.add(new Cloud((int) (Math.random()*getWorldWidth()), (int) (getWorldHeight() + 300 * Math.random())));
 				}
-				
 			}
 			
 			//Draw game state.
